@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "run-android": "node node_modules/react-native run-android && node node_modules/react-native/local-cli/cli.js start",
+    "run-android": "react-native run-android && node node_modules/react-native/local-cli/cli.js start",
     "build": "(cd android/ && ./gradlew assembleDebug)",
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "bundle-android": "react-native bundle --platform android --dev false --entry-file index.android.js --bundle-output android/app/src/main/assets/index.android.bundle --sourcemap-output android/app/src/main/assets/index.android.map --assets-dest android/app/src/main/res/",
@@ -12,10 +12,12 @@
   "dependencies": {
     "react": "15.4.2",
     "react-native": "0.42.3",
+    "react-native-easy-grid": "^0.1.8",
     "react-native-icons": "^0.4.0",
     "react-native-navbar": "^1.7.1",
     "react-native-radio-buttons": "^0.14.0",
     "react-native-redux-router": "^1.0.7",
+    "react-native-vector-icons": "^4.0.1",
     "react-redux": "^5.0.4",
     "redux": "^3.6.0"
   },

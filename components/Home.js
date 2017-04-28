@@ -5,6 +5,10 @@ import { View, Text, Button, TextInput, StyleSheet, AsyncStorage } from 'react-n
 import {navbar} from 'react-native';
 import { Navigator, Image, TouchableHighlight } from 'react-native';
 import TopMenu from './TopMenu';
+import { Col, Row, Grid } from "react-native-easy-grid";
+
+import Icon from 'react-native-vector-icons/FontAwesome';
+const myIcon3 = (<Icon name="home" size={60} color="#708090" />)//home
 
 
 const STORAGE_PREFIX = '@QarSyncManagerFiles:files';
@@ -28,15 +32,10 @@ class Home extends React.Component {
     render() {
         let Actions = this.props.routes;
         return (
-            <View>
-              <TopMenu/>
-
+            <View style={{flex:1,flexDirection: 'column',}}>
+              <TopMenu settingsActions={ Actions.settings }/>
               <View style={styles.container}>
-
-                <Button  title='QAR' ></Button>
-                <Button  title='SNfS'></Button>
-
-                  <Button onPress={ Actions.settings }  title={ this.props.btnText } >Go settings</Button>
+              <Text>{myIcon3}</Text>
                   <Text>Home page</Text>
                   <Text style={styles.filesTitle}>Files:</Text>
                   <Text>{ this.state.file }</Text>
@@ -55,10 +54,12 @@ class Home extends React.Component {
 
 const styles = StyleSheet.create({
     container: {
+        flex:1,
+        flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#55efef',
-    },
+        backgroundColor: '#F0FFFF',
+      },
     filesTitle: {
         margin: 25,
     },
