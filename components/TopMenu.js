@@ -9,7 +9,7 @@ const myIcon = (<Icon name="map-signs" size={60} color="#F0FFFF" />)//перек
 const myIcon2 = (<Icon name="repeat" size={60} color="#F0FFFF" />)//подключение к QAR
 const myIcon3 = (<Icon name="cogs" size={60} color="#708090" />) // страница настроек
 const myIcon4 = (<Icon name="plus" size={60} color="#F0FFFF" />)//оптравка новых файлов на сервер
-
+const myIcon5 = (<Icon name="tree" size={60} color="#F0FFFF" />)
 
 
 export default class TopMenu extends React.Component {
