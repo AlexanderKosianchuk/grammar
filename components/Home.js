@@ -13,9 +13,9 @@ var files = [
             {name: 'Third5', lastDateSavingFromQAR : "somedateNew3", syncDate : "lastSyncDateNew3", status : "loaded"},
             {name: 'Third6', lastDateSavingFromQAR : "somedateNew3", syncDate : "lastSyncDateNew3", status : "sent"}];
 
-class Home extends React.Component {
-
-    constructor(props) {
+class Home extends React.Component 
+{
+    constructor (props) {
         super(props);
         
         this.state = {
@@ -24,20 +24,20 @@ class Home extends React.Component {
             isDone : false,
             rendering : true
         };
-            
-
     }
 
-    setFiles() {// method for files settting from an array in AsyncStorage 
-                for (var i = 0; i < files.length; i++)
-                {
-                    AsyncStorage
-                        .setItem(STORAGE_PREFIX + i, JSON.stringify(files[i]))
-                        .done(()=>{this.setState({file : 'loaded', isDone : !this.state.isDone }) });
-                }           
+    // method for files settting from an array in AsyncStorage
+    setFiles () 
+    {
+        for (var i = 0; i < files.length; i++) {
+            AsyncStorage
+                .setItem(STORAGE_PREFIX + i, JSON.stringify(files[i]))
+                .done(()=>{this.setState({file : 'loaded', isDone : !this.state.isDone }) });
+        }           
     }
 
-    render() {
+    render () 
+    {
         let Actions = this.props.routes;
         return (
             <View style={styles.container}>
@@ -51,9 +51,8 @@ class Home extends React.Component {
                     onChangeText={(text) => this.setState({inputText: text})}
                 />
                 <Button onPress={ this.setFiles.bind(this) }  title="Скачать файлы с сервера" >Add File</Button>
-                <FilesList storage_prefix={ STORAGE_PREFIX } LENGTH = {files.length} rendering = {this.state.rendering}/>
+                <FilesList storage_prefix={ STORAGE_PREFIX } filesArrayLength = {files.length} rendering = {this.state.rendering}/>
             </View>
-        
         );
     }
 }
