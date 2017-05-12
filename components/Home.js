@@ -2,13 +2,10 @@
 
 import React, { Component } from 'react';
 import { View, Text, Button, TextInput, StyleSheet, AsyncStorage } from 'react-native';
-import {navbar} from 'react-native';
-import { Navigator, Image, TouchableHighlight } from 'react-native';
-import TopMenu from './TopMenu';
-import { Col, Row, Grid } from "react-native-easy-grid";
-
+import TopMenu from './TopMenu';//ты написал, что это строка не нужно, но  она нужна для портирования данных
 import Icon from 'react-native-vector-icons/FontAwesome';
-const myIcon3 = (<Icon name="home" size={60} color="#708090" />)//home
+
+const HomeIcon = (<Icon name="home" size={60} color="#708090" />)//home
 
 
 const STORAGE_PREFIX = '@QarSyncManagerFiles:files';
@@ -32,10 +29,10 @@ class Home extends React.Component {
     render() {
         let Actions = this.props.routes;
         return (
-            <View style={{flex:1,flexDirection: 'column',}}>
+            <View style={styles.container}>
               <TopMenu settingsActions={ Actions.settings }/>
-              <View style={styles.container}>
-              <Text>{myIcon3}</Text>
+              <View style={styles.homePage}>
+              <Text>{HomeIcon}</Text>
                   <Text>Home page</Text>
                   <Text style={styles.filesTitle}>Files:</Text>
                   <Text>{ this.state.file }</Text>
@@ -53,13 +50,17 @@ class Home extends React.Component {
 
 
 const styles = StyleSheet.create({
-    container: {
+    container:{
+        flex:1,
+        flexDirection: 'column',
+    },
+    homePage: {
         flex:1,
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#F0FFFF',
-      },
+    },
     filesTitle: {
         margin: 25,
     },
