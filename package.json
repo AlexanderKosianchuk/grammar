@@ -5,6 +5,7 @@
   "scripts": {
     "run-android": "react-native run-android && node node_modules/react-native/local-cli/cli.js start",
     "build": "(cd android/ && ./gradlew assembleDebug)",
+    "get-js": "curl \"localhost:8081/index.android.bundle?platform=android&dev=false&minify=true\" -o \"android/app/src/main/assets/index.android.bundle\"",
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "bundle-android": "react-native bundle --platform android --dev false --entry-file index.android.js --bundle-output android/app/src/main/assets/index.android.bundle --sourcemap-output android/app/src/main/assets/index.android.map --assets-dest android/app/src/main/res/",
     "test": "jest"
