@@ -1,6 +1,6 @@
 'use strict';
 import React, { Component } from 'react'; 
-import { View, Text, Button, TextInput, StyleSheet, AsyncStorage, ScrollView, StatusBar } from 'react-native';
+import { View, Text, Button, TextInput, StyleSheet, AsyncStorage, ScrollView} from 'react-native';
 import { Router, routerReducer, Route } from 'react-native-redux-router';
 import Home from './Home';
 import Settings from './Settings';
@@ -8,35 +8,25 @@ import ServerCard from './ServerCard';
 
 
 var STORAGE_PREFIX = '@QarSyncManagerFiles:files';
+var listOfServerCards = []; // an array of ServerCards
 
-var list = [];// тот самый список серверкардов
-var colors = [];
-var rendered = false;
 class FilesList extends Component
 {
     
     constructor (props)
     {
         super(props);
-    
-        this.state = {
-            visible: false,
-            rendered : this.props.rendering
-        };
-    
-        this.files =  [];
-        this.tests = [];
-    
-        if (this.state.rendered === true) {
+    		
+    		this.files = [];
             this.getterAndTakingInList();
-        }
 
     }
 
-    async getterAndTakingInList () // async method for reading from AsyncStorage
+    // async method for reading from AsyncStorage
+    async getterAndTakingInList () 
     {
         for (var i = 0; i < this.props.filesArrayLength; i++) {
-            try {//code from facebook example, to work with async
+            try {
                 const value = await AsyncStorage.getItem(STORAGE_PREFIX + i);
                     if (value !== null){
                         this.files.push(JSON.parse(value));
@@ -44,13 +34,20 @@ class FilesList extends Component
     		    } 
             catch (error) 
             {
-              // here to display something
+                render()
+                    {
+                    	return(
+                    		<View style={styles.containerViewParent}>
+                    			<Text> Произошла ошибка, попробуйте еще раз</Text>
+                    		</View>
+                    		);
+                    }              
             }
         }
 
-      // part of code, to COMPONENTS elements in array
+      // part of code, to push ServerCard's components into an array
         this.files.map(function(element, i) {
-            list.push( <ServerCard 
+            listOfServerCards.push( <ServerCard 
                 name = {element.name}
                 key = {i}
                 lastDateSavingFromQAR = {element.lastDateSavingFromQAR}
@@ -62,26 +59,23 @@ class FilesList extends Component
 
     render(){
         return(
-            <View style={styles.containerForViewParent}>
-                <ScrollView style={styles.containerForScrollView}>
-                    {list}
+            <View style={styles.containerViewParent}>
+                <ScrollView style={styles.containerScrollView}>
+                    {listOfServerCards}
                 </ScrollView>
             </View>);
     }
 }
 
-
 const styles = StyleSheet.create({
-    containerForViewParent: {
+    containerViewParent: {
         flex : 1, 
         flexDirection: 'row' 
     },
-    containerForScrollView: {
+    containerScrollView: {
         flex : 1, 
         flexDirection: 'column'
     }
 });
-
-  
 
 module.exports = FilesList;

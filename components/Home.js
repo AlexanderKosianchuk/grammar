@@ -22,7 +22,6 @@ class Home extends React.Component
             inputText: 'file1',
             file: 'empty',
             isDone : false,
-            rendering : true
         };
     }
 
@@ -73,7 +72,6 @@ const styles = StyleSheet.create({
     filesList : {
         alignItems: 'flex-end',
         flexDirection : 'row'
-        
     }
 });
 

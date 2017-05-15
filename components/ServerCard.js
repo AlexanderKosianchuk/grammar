@@ -8,10 +8,8 @@ import Settings from './Settings';
 
 class ServerCard extends Component
 {
-  
-    getColor (status) 
+    getStyle (status) 
     {
-
         if (status === 'loaded'){
             return styles.colorForStatusLoaded
         }
@@ -19,24 +17,22 @@ class ServerCard extends Component
             return styles.colorForStatusSent
         }
         else {
-            console.log("TheColorError")
+            return styles.colorForStatusError
         }
     }
 
     render () 
     {
-        this.getColor(this.props.status);
-            return(
-                <View key={this.props.i} style={styles.container}>
-                <Text>{this.props.name}</Text>
-                <Text>{this.props.lastDateSavingFromQAR}</Text>
-                <Text>{this.props.syncDate}</Text>
-                <Text style = {this.getColor(this.props.status)}>{this.props.status}</Text>
-                <Text>--------------------------------------------------</Text>
-                </View>);
+        return(
+            <View key={this.props.i} style={styles.container}>
+            <Text>{this.props.name}</Text>
+            <Text>{this.props.lastDateSavingFromQAR}</Text>
+            <Text>{this.props.syncDate}</Text>
+            <Text style = {this.getStyle(this.props.status)}>{this.props.status}</Text>
+            <Text>--------------------------------------------------</Text>
+            </View>);
     }
 }
-
 
 const styles = StyleSheet.create({
     colorForStatusLoaded: {
@@ -46,6 +42,10 @@ const styles = StyleSheet.create({
         flex : 1, 
         backgroundColor :  'red'
     }, 
+    colorForStatusError: {
+        flex : 1, 
+        backgroundColor :  'black'
+    }, 
     container: {
     flex : 1,
     paddingTop: 5, 
@@ -53,7 +53,5 @@ const styles = StyleSheet.create({
     flexDirection: 'column'
     }
 });
-
-  
 
 module.exports = ServerCard;
