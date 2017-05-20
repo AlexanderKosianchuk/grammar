@@ -16,10 +16,9 @@ class FilesList extends Component
     constructor (props)
     {
         super(props);
-    		
-    		this.files = [];
-            this.getterAndTakingInList();
-
+    
+        this.files = [];
+        this.getterAndTakingInList();
     }
 
     // async method for reading from AsyncStorage
@@ -30,17 +29,16 @@ class FilesList extends Component
                 const value = await AsyncStorage.getItem(STORAGE_PREFIX + i);
                     if (value !== null){
                         this.files.push(JSON.parse(value));
-       		    	}
-    		    } 
-            catch (error) 
-            {
+                   }
+            } 
+            catch (error) {
                 render()
                     {
-                    	return(
-                    		<View style={styles.containerViewParent}>
-                    			<Text> Произошла ошибка, попробуйте еще раз</Text>
-                    		</View>
-                    		);
+                        return(
+                        <View style={styles.containerViewParent}>
+                        <Text> Произошла ошибка, попробуйте еще раз</Text>
+                        </View>
+                        );
                     }              
             }
         }

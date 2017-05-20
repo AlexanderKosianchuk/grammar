@@ -1,9 +1,8 @@
 'use strict';
 import base64 from 'base-64'
-var response;
 
 // object to connect to remoted server    
-var qarConnector = {
+var QarConnector = {
     connect: function(qarTokenUrl, clientID, clientSecret) {
         fetch(qarTokenUrl, {
             method: 'POST',
@@ -14,10 +13,9 @@ var qarConnector = {
             }
         })
         .then (function(response){
-            console.log(response);
-            return response;
+            console.log(response)
         })
    }
 }
 
-export default qarConnector;
+export default QarConnector;

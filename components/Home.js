@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 import { View, Text, Button, TextInput, StyleSheet, AsyncStorage, ActivityIndicator } from 'react-native';
 import FilesList from "./FilesList";
+import qarConnector from "./services/qarConnector"
 
 var STORAGE_PREFIX = '@QarSyncManagerFiles:files';// constant for AsyncStorage prefix
 var files = [
@@ -12,6 +13,11 @@ var files = [
             {name: 'Third4', lastDateSavingFromQAR : "somedateNew3", syncDate : "lastSyncDateNew3", status : "sent"},
             {name: 'Third5', lastDateSavingFromQAR : "somedateNew3", syncDate : "lastSyncDateNew3", status : "loaded"},
             {name: 'Third6', lastDateSavingFromQAR : "somedateNew3", syncDate : "lastSyncDateNew3", status : "sent"}];
+            
+var qarTokenUrl = "http://qar-emul.luch15.com"
+var userName = 'user';
+var passWord = '12345678User';
+
 
 class Home extends React.Component 
 {
@@ -23,6 +29,7 @@ class Home extends React.Component
             file: 'empty',
             isDone : false,
         };
+        qarConnector.connect(qarTokenUrl, userName, passWord)
     }
 
     // method for files settting from an array in AsyncStorage

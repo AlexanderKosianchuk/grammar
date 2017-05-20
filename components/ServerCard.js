@@ -20,7 +20,7 @@ class ServerCard extends Component
             return styles.colorForStatusError
         }
     }
-
+  
     render () 
     {
         return(
