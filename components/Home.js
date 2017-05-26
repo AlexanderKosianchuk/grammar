@@ -56,7 +56,7 @@ class Home extends React.Component
                         value={this.state.inputText}
                         onChangeText={(text) => this.setState({inputText: text})}
                     />
-                    <Button onPress={ this.addFile.bind(this) }  title="addFile" >Add File</Button>
+                    <Button onPress={ this.setFiles.bind(this) }  title="Скачать файлы с сервера" >Add File</Button>
                     <FilesList storage_prefix={ STORAGE_PREFIX } filesArrayLength = {files.length} rendering = {this.state.rendering}/>
                 </View>
             </View>
