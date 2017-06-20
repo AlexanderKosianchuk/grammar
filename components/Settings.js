@@ -1,7 +1,7 @@
 'use strict';
 
 import React, { Component } from 'react';
-import { View, Text, Button, StyleSheet, TextInput, AppRegistry, AsyncStorage } from 'react-native';
+import { View, Text, Button, StyleSheet, TextInput, AsyncStorage } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 let STORAGE_PREFIX = '@configs:';
