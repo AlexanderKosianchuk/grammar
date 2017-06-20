@@ -32,9 +32,8 @@ class Settings extends React.Component
       this.state = stateValues;
   }
 
-
-
-  buildOptions(){
+  buildOptions()
+  {
       let configInputs = [];
       let that = this;
 
@@ -43,23 +42,25 @@ class Settings extends React.Component
       });
 
       return(configInputs);
-    };
+  };
 
-  onButtonPress(){
+  onButtonPress()
+  {
 
       configArr.forEach((currentValue) => {
            AsyncStorage.setItem(STORAGE_PREFIX + currentValue.option, currentValue.valueText);
       });
-      }
+  }
 
   handleChange(text, option)
-    {
+  {
         this.setState({
             [option]: text
         });
-    }
+  }
 
-  putTextInput(label, option, valueText) {
+  putTextInput(label, option, valueText)
+  {
       return(
           <View>
               <Text style={styles.inscription} key={option+'text'} > { label }:</Text>
@@ -68,14 +69,15 @@ class Settings extends React.Component
                   />
           </View>
       );
-    }
+  }
 
-    render() {
+    render()
+    {
         var Actions = this.props.routes;
           return (
               <View style={ styles.container }>
                   <View style={ styles.settingsPage }>
-                      <Text> { settingsPageIconIcon }</Text>
+                      <Text> { settingsPageIconIcon } </Text>
                       <Text>Settings page</Text>
                         <View style={ styles.buttons } >
                             <Button onPress={ Actions.home } title={ this.props.btnText }>Go home</Button>
