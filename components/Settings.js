@@ -1,10 +1,10 @@
 'use strict';
 
 import React, { Component } from 'react';
-import { View, Text, Button, StyleSheet, TextInput, AppRegistry, Alert, AsyncStorage } from 'react-native';
+import { View, Text, Button, StyleSheet, TextInput, AppRegistry, AsyncStorage } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-let STORAGE_PREFIX = '@QarSyncManagerFiles:configs:'; // const value = await AsyncStorage.getItem('@QarSyncManagerFiles:configs:');
+let STORAGE_PREFIX = '@configs:';
 
 const settingsPageIconIcon = (<Icon name="cogs" size={60} color="#708090" />)
 const configArr = [
@@ -32,6 +32,8 @@ class Settings extends React.Component
       this.state = stateValues;
   }
 
+
+
   buildOptions(){
       let configInputs = [];
       let that = this;
@@ -46,7 +48,8 @@ class Settings extends React.Component
   onButtonPress(){
 
       configArr.forEach((currentValue) => {
-           AsyncStorage.getItem(STORAGE_PREFIX + currentValue.option, currentValue.value);
+           AsyncStorage.setItem(STORAGE_PREFIX + currentValue.option, currentValue.valueText);
+           console.log(currentValue.valueText);
       });
           console.log(this.state);
       }
