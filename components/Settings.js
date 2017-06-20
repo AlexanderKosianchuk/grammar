@@ -49,9 +49,7 @@ class Settings extends React.Component
 
       configArr.forEach((currentValue) => {
            AsyncStorage.setItem(STORAGE_PREFIX + currentValue.option, currentValue.valueText);
-           console.log(currentValue.valueText);
       });
-          console.log(this.state);
       }
 
   handleChange(text, option)
@@ -59,7 +57,6 @@ class Settings extends React.Component
         this.setState({
             [option]: text
         });
-        console.log(text);
     }
 
   putTextInput(label, option, valueText) {
@@ -74,20 +71,19 @@ class Settings extends React.Component
     }
 
     render() {
-        let options = this.buildOptions();
         var Actions = this.props.routes;
           return (
               <View style={ styles.container }>
                   <View style={ styles.settingsPage }>
-                      <Text>{settingsPageIconIcon}</Text>
+                      <Text> { settingsPageIconIcon }</Text>
                       <Text>Settings page</Text>
                         <View style={ styles.buttons } >
                             <Button onPress={ Actions.home } title={ this.props.btnText }>Go home</Button>
-                            <Button onPress={this.onButtonPress.bind(this)} title="Save" />
+                            <Button onPress={ this.onButtonPress.bind(this) } title="Save" />
                         </View>
                   </View>
                       <View >
-                          { options }
+                          { this.buildOptions() }
                       </View>
                 </View>
           );
