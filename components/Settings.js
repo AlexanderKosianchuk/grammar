@@ -71,8 +71,8 @@ class Settings extends React.Component
       );
   }
 
-    render()
-    {
+  render()
+  {
         var Actions = this.props.routes;
           return (
               <View style={ styles.container }>
@@ -89,7 +89,7 @@ class Settings extends React.Component
                       </View>
                 </View>
           );
-    }
+  }
   }
 
 const styles = StyleSheet.create({
