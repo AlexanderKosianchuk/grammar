@@ -46,7 +46,6 @@ class Home extends React.Component
         };
         qarConnector.connect(qarTokenUrl, userName, passWord)
     }
-
     // method for files settting from an array in AsyncStorage
     setFiles ()
     {
@@ -73,7 +72,7 @@ class Home extends React.Component
                         value={this.state.inputText}
                         onChangeText={(text) => this.setState({inputText: text})}
                     />
-                    <Button onPress={ this.setFiles.bind(this) }  title="addFile" >Add File</Button>
+                    <Button onPress={ this.setFiles.bind(this) }  title="addFile" >Get Files</Button>
                     <FilesList storage_prefix={ STORAGE_PREFIX } filesArrayLength = {files.length} rendering = {this.state.rendering}/>
                 </View>
             </View>
