@@ -4,7 +4,10 @@ import React, { Component } from 'react';
 import { View, Text, Button, TextInput, StyleSheet, AsyncStorage } from 'react-native';
 import TopMenu from './TopMenu';
 import FilesList from "./FilesList";
+import Icon from 'react-native-vector-icons/FontAwesome';
 import qarConnector from "./services/qarConnector"
+
+const HomeIcon = (<Icon name="home" size={60} color="#708090" />)//home
 
 var STORAGE_PREFIX = '@QarSyncManagerFiles:files';// constant for AsyncStorage prefix
 var files = [
@@ -18,21 +21,6 @@ var files = [
 var qarTokenUrl = "http://qar-emul.luch15.com";
 var userName = 'user';
 var passWord = '12345678User';
-
-import Icon from 'react-native-vector-icons/FontAwesome';
-
-const HomeIcon = (<Icon name="home" size={60} color="#708090" />)//home
-
-var STORAGE_PREFIX = '@QarSyncManagerFiles:files';// constant for AsyncStorage prefix
-var files = [
-    {name: 'first', lastDateSavingFromQAR : "somedate", syncDate : "lastSyncDate", status : "sent"},
-    {name: 'second', lastDateSavingFromQAR : "somedateNew2", syncDate : "lastSyncDateNew2", status : "loaded"},
-    {name: 'Third', lastDateSavingFromQAR : "somedateNew3", syncDate : "lastSyncDateNew3", status : "loaded"},
-    {name: 'Third4', lastDateSavingFromQAR : "somedateNew3", syncDate : "lastSyncDateNew3", status : "sent"},
-    {name: 'Third5', lastDateSavingFromQAR : "somedateNew3", syncDate : "lastSyncDateNew3", status : "loaded"},
-    {name: 'Third6', lastDateSavingFromQAR : "somedateNew3", syncDate : "lastSyncDateNew3", status : "sent"}
-];
-
 
 class Home extends React.Component
 {

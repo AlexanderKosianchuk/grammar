@@ -1,8 +1,6 @@
 'use strict';
 import base64 from 'base-64'
 import parse5 from 'parse5'
-var DomParser = require('react-native-html-parser').DOMParser
-//var Parser = require('html-react-parser');
 
 // object to connect to remoted server  
 let QarConnector = { 
@@ -43,5 +41,4 @@ let QarConnector = {
         }             
     }
 }
-
 export default QarConnector;
