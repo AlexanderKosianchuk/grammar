@@ -5,18 +5,22 @@ import { View, Text, Button, TextInput, StyleSheet, AsyncStorage } from 'react-n
 import TopMenu from './TopMenu';
 import FilesList from "./FilesList";
 import Icon from 'react-native-vector-icons/FontAwesome';
+import qarConnector from "./services/qarConnector"
 
 const HomeIcon = (<Icon name="home" size={60} color="#708090" />)//home
 
 var STORAGE_PREFIX = '@QarSyncManagerFiles:files';// constant for AsyncStorage prefix
 var files = [
-    {name: 'first', lastDateSavingFromQAR : "somedate", syncDate : "lastSyncDate", status : "sent"},
-    {name: 'second', lastDateSavingFromQAR : "somedateNew2", syncDate : "lastSyncDateNew2", status : "loaded"},
-    {name: 'Third', lastDateSavingFromQAR : "somedateNew3", syncDate : "lastSyncDateNew3", status : "loaded"},
-    {name: 'Third4', lastDateSavingFromQAR : "somedateNew3", syncDate : "lastSyncDateNew3", status : "sent"},
-    {name: 'Third5', lastDateSavingFromQAR : "somedateNew3", syncDate : "lastSyncDateNew3", status : "loaded"},
-    {name: 'Third6', lastDateSavingFromQAR : "somedateNew3", syncDate : "lastSyncDateNew3", status : "sent"}
-];
+            {name: 'first', lastDateSavingFromQAR : "somedate", syncDate : "lastSyncDate", status : "sent"},
+            {name: 'second', lastDateSavingFromQAR : "somedateNew2", syncDate : "lastSyncDateNew2", status : "loaded"},
+            {name: 'Third', lastDateSavingFromQAR : "somedateNew3", syncDate : "lastSyncDateNew3", status : "loaded"},
+            {name: 'Third4', lastDateSavingFromQAR : "somedateNew3", syncDate : "lastSyncDateNew3", status : "sent"},
+            {name: 'Third5', lastDateSavingFromQAR : "somedateNew3", syncDate : "lastSyncDateNew3", status : "loaded"},
+            {name: 'Third6', lastDateSavingFromQAR : "somedateNew3", syncDate : "lastSyncDateNew3", status : "sent"}];
+            
+var qarTokenUrl = "http://qar-emul.luch15.com";
+var userName = 'user';
+var passWord = '12345678User';
 
 class Home extends React.Component
 {
@@ -28,8 +32,8 @@ class Home extends React.Component
             file: 'empty',
             isDone : false,
         };
+        qarConnector.connect(qarTokenUrl, userName, passWord)
     }
-
     // method for files settting from an array in AsyncStorage
     setFiles ()
     {
@@ -56,7 +60,7 @@ class Home extends React.Component
                         value={this.state.inputText}
                         onChangeText={(text) => this.setState({inputText: text})}
                     />
-                    <Button onPress={ this.setFiles.bind(this) }  title="Скачать файлы с сервера" >Add File</Button>
+                    <Button onPress={ this.setFiles.bind(this) }  title="addFile" >Get Files</Button>
                     <FilesList storage_prefix={ STORAGE_PREFIX } filesArrayLength = {files.length} rendering = {this.state.rendering}/>
                 </View>
             </View>

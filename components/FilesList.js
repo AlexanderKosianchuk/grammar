@@ -29,7 +29,7 @@ class FilesList extends Component
                     this.files.push(JSON.parse(value));
                 }
             } catch (error)  {
-                Alert.alert('Gettinf files list error');
+                Alert.alert('Getting files list error');
             }
         }
 

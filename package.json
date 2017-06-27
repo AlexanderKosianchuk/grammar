@@ -11,16 +11,19 @@
     "test": "jest"
   },
   "dependencies": {
+    "base-64": "^0.1.0",
     "react": "15.4.2",
-  "react-native": "0.42.3",
-  "react-native-easy-grid": "^0.1.8",
-  "react-native-icons": "^0.4.0",
-  "react-native-navbar": "^1.7.1",
-  "react-native-radio-buttons": "^0.14.0",
-  "react-native-redux-router": "^1.0.7",
-  "react-native-vector-icons": "^4.0.1",
-  "react-redux": "^5.0.4",
-  "redux": "^3.6.0"
+    "react-native": "0.42.3",
+    "react-native-easy-grid": "^0.1.8",
+    "react-native-html-parser": "0.0.4",
+    "react-native-icons": "^0.4.0",
+    "react-native-navbar": "^1.7.1",
+    "react-native-parse-html": "^2.2.3",
+    "react-native-radio-buttons": "^0.14.0",
+    "react-native-redux-router": "^1.0.7",
+    "react-native-vector-icons": "^4.0.1",
+    "react-redux": "^5.0.4",
+    "redux": "^3.6.0"
   },
   "devDependencies": {
     "babel-jest": "19.0.0",
