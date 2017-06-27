@@ -1,6 +1,5 @@
 'use strict';
 import base64 from 'base-64'
-import parse5 from 'parse5'
 
 // object to connect to remoted server  
 let QarConnector = { 
@@ -9,36 +8,29 @@ let QarConnector = {
         fetch(qarTokenUrl, {
             method: 'POST',
             headers: {
-                'Accept': 'application/json',
+                'Accept': 'application/text',
                 'Content-Type' : 'application/text',
                 "Authorization" : "Basic " + base64.encode(clientID + ":" + clientSecret)
             }
         })
         .then (function(response){
-            let html = response._bodyInit.toString();
+            let html = response._bodyInit
             QarConnector.getFilesList(html) 
         })
     },
-    getFilesList(html) {
-        // slicing here html body
+    getFilesList(html) {// method for getting an array of names of files from server
         var posFirst = html.indexOf("<tbody>")
         var posLast = html.lastIndexOf("</tbody>");
         var endOfFile = posLast;
         html = html.slice(posFirst, posLast)
-        var arr = [];
-        while(posLast != -1){
-        //here filling with values an array
-            var result;
-            posFirst = html.indexOf('<a href')
-            posLast = html.indexOf('a>')
-            result = html.slice(posFirst /*+ 54*/, posLast - 2)
-            arr.push(result)
-            html = html.slice(posLast + 2, endOfFile)
+
+        var arrayOfFileNames = [];
+        var match = [];
+        var pattern = /<a href="(.*?)"/g;
+
+        while(match=pattern.exec(html)){
+            arrayOfFileNames.push(match[1]);
         }
-        for (var i = 0; i < arr.length; i++){
-            // here fixing te get simply file names
-            arr[i] = arr[i].slice(54, arr[i].length);
-        }             
     }
 }
 export default QarConnector;
