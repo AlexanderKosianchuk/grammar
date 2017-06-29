@@ -43,12 +43,20 @@ class Settings extends React.Component
 
       return(configInputs);
   };
+  componentWillMount()
+  {
 
+      configArr.forEach(async (currentValue) => {
+          const asyncValue = await AsyncStorage.getItem(STORAGE_PREFIX + currentValue.option);
+          this.setState({[currentValue.option]:asyncValue})
+      });
+
+  }
   onButtonPress()
   {
 
       configArr.forEach((currentValue) => {
-           AsyncStorage.setItem(STORAGE_PREFIX + currentValue.option, currentValue.valueText);
+          AsyncStorage.setItem(STORAGE_PREFIX + currentValue.option, this.state[currentValue.option]);
       });
   }
 
