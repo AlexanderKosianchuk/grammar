@@ -1,125 +1,188 @@
 'use strict';
 
-import React, { Component } from 'react';
-import { View, Text, Button, StyleSheet, TextInput, AsyncStorage } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import React from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import {View, Text, Button, StyleSheet, TextInput, Keyboard, ScrollView} from 'react-native';
 
-let STORAGE_PREFIX = '@configs:';
+import TopMenu from './TopMenu';
+import CapitalText from './CapitalText';
 
-const settingsPageIconIcon = (<Icon name="cogs" size={60} color="#708090" />)
-const configArr = [
-    {label: 'Qar Ip', option: 'qarIp', valueText:'1234.4321.1.12'},
-    {label: 'Qar login http auth', option: 'qarLoginHttpAuthorizationd', valueText:'myLoginHttpAuth'},
-    {label: 'qarPassHttpAuth', option: 'qarPassHttpAuth', valueText:'myPassHttp***'},
-    {label: 'syncServerIp', option: 'syncServerIp', valueText:'7890.987.3.21'},
-    {label: 'syncServerLogin', option: 'syncServerLogin', valueText:'myLoginServer'},
-    {label: 'syncServerPass', option: 'syncServerPass', valueText:'myPassServer****'},
-];
+import getSettings from './actions/getSettings';
+import saveSettings from './actions/saveSettings';
+import clearSettings from './actions/clearSettings';
 
-class Settings extends React.Component
-{
+class Settings extends React.Component {
+    constructor(props) {
+        super(props);
 
-  constructor(props)
-  {
-      super(props);
+        this.state = {
+            configs: {}
+        };
+    }
 
-      let stateValues = {};
+    syncState(storedConfigs, stateConfigs) {
+        if (Object.keys(stateConfigs).length !== storedConfigs.length) {
+            let newStateConfigs = {};
+            storedConfigs.forEach((item, index) => {
+                    newStateConfigs = {...newStateConfigs,  ...{
+                        [item.key]: item.value
+                    }};
+                }
+            );
 
-      configArr.forEach((currentValue) => {
-           stateValues[currentValue.option] = currentValue.valueText;
-      });
+            this.setState({
+                configs: newStateConfigs
+            });
+        }
+    }
 
-      this.state = stateValues;
-  }
+    componentDidMount() {
+        if (!(this.props.defaultSettings)
+            || !(this.props.defaultSettings.length)
+        ) {
+            throw new Error('Invalid settings reducer configuration');
+        }
 
-  buildOptions()
-  {
-      let configInputs = [];
-      let that = this;
+        if (this.props.pending !== false) {
+            this.props.getSettings({
+                storageKeyPrefix: this.props.storageKeyPrefix,
+                defaultSettings: this.props.defaultSettings
+            });
+        }
 
-      configArr.forEach((currentValue) => {
-             configInputs.push(that.putTextInput(currentValue.label, currentValue.option, currentValue.valueText));
-      });
+        this.syncState(this.props.settings.items, this.state.configs);
+    }
 
-      return(configInputs);
-  };
-  componentWillMount()
-  {
+    componentDidUpdate() {
+        this.syncState(this.props.settings.items, this.state.configs);
+    }
 
-      configArr.forEach(async (currentValue) => {
-          const asyncValue = await AsyncStorage.getItem(STORAGE_PREFIX + currentValue.option);
-          this.setState({[currentValue.option]:asyncValue})
-      });
+    componentWillReceiveProps(nextProps) {
+        if ((nextProps.pending === false)
+            && nextProps.settings.items
+            && nextProps.settings.items.length
+        ) {
+            this.syncState(nextProps.settings.items, this.state.configs);
+        }
+    }
 
-  }
-  onButtonPress()
-  {
+    componentWillUnmount() {
+        // for testing AsyncStorage configs saving
+        if (__DEV__) {
+            this.props.clearSettings();
+        }
+    }
 
-      configArr.forEach((currentValue) => {
-          AsyncStorage.setItem(STORAGE_PREFIX + currentValue.option, this.state[currentValue.option]);
-      });
-  }
+    putTextInput(configItem) {
+        return (
+            <View key={configItem.index} style={styles.configItem}>
+                <Text>{configItem.label}:</Text>
+                <TextInput value={this.state.configs[configItem.key] || ''}
+                    onChangeText={(text) => {
+                        let configs = this.state.configs;
+                        configs[configItem.key] = text;
+                        this.setState({
+                            configs: configs
+                        });
+                    }}
+                />
+            </View>
+        );
+    }
 
-  handleChange(text, option)
-  {
-        this.setState({
-            [option]: text
-        });
-  }
+    buildOptions() {
+        if (this.props.pending !== false) {
+            return <Text>Loading...</Text>
+        }
 
-  putTextInput(label, option, valueText)
-  {
-      return(
-          <View>
-              <Text style={styles.inscription} key={option+'text'} > { label }:</Text>
-                 <TextInput
-                      key={option} value={this.state[option]} onChangeText={ (text) => this.handleChange(text, option) }
-                  />
-          </View>
-      );
-  }
+        let storedConfigs = this.props.settings.items;
+        return Object.keys(storedConfigs).map((key, index) =>
+            this.putTextInput({...storedConfigs[key], ...{index: index}})
+        );
+    }
 
-  render()
-  {
-        var Actions = this.props.routes;
-          return (
-              <View style={ styles.container }>
-                  <View style={ styles.settingsPage }>
-                      <Text> { settingsPageIconIcon } </Text>
-                      <Text>Settings page</Text>
-                        <View style={ styles.buttons } >
-                            <Button onPress={ Actions.home } title={ this.props.btnText }>Go home</Button>
-                            <Button onPress={ this.onButtonPress.bind(this) } title="Save" />
-                        </View>
-                  </View>
-                      <View >
-                          { this.buildOptions() }
-                      </View>
+    saveSettings() {
+        this.props.saveSettings({
+            storageKeyPrefix: this.props.storageKeyPrefix,
+            configs: this.state.configs
+        }).then(() => Keyboard.dismiss());
+    }
+
+    render() {
+        return (
+            <View style={styles.container}>
+                <TopMenu
+                    items={[
+                        {
+                            icon: 'home',
+                            handler: this.props.routes.home
+                        },
+                        {
+                            icon: 'save',
+                            handler: this.saveSettings.bind(this)
+                        }
+                    ]}
+                />
+                <View style={styles.body}>
+                    <CapitalText
+                        text='Settings'
+                    />
+                    <View style={styles.containerViewParent}>
+                      <ScrollView style={styles.containerScrollView}>
+                          {this.buildOptions()}
+                      </ScrollView>
+                    </View>
                 </View>
-          );
-  }
-  }
+            </View>
+        );
+    }
+}
+
 
 const styles = StyleSheet.create({
-  container: {
-      flex: 1,
-      justifyContent: 'center',
-      backgroundColor: '#efef55',
-  },
-  buttons: {
-      flex:1,
-      flexDirection: 'column',
-  },
-  settingsPage: {
-      flex:1,
-      alignItems: 'center',
-      justifyContent: 'center',
-      margin: 10,
-  },
-  text:{
-     color: 'black',
-  },
+    containerViewParent: {
+        flex : 1,
+        flexDirection: 'row'
+    },
+    containerScrollView: {
+        flex : 1,
+        flexDirection: 'column'
+    },
+    container: {
+        flex: 1,
+    },
+
+    body: {
+        flex: 5,
+        backgroundColor: '#fff',
+    },
+
+    content: {
+        alignItems: 'center',
+        padding: 10,
+    },
+
+    configItem: {
+        width: '100%',
+    }
 });
 
+function mapStateToProps (state) {
+    return {
+        pending: state.settings.pending,
+        storageKeyPrefix: state.settings.storageKey,
+        settings: state.settings,
+        defaultSettings: state.settings.default
+    }
+}
 
-module.exports = Settings;
+function mapDispatchToProps(dispatch) {
+    return {
+        getSettings: bindActionCreators(getSettings, dispatch),
+        saveSettings: bindActionCreators(saveSettings, dispatch),
+        clearSettings: bindActionCreators(clearSettings, dispatch),
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Settings);

@@ -1,47 +1,78 @@
 'use strict';
 
 import React, { Component } from 'react';
-import { View, Text, Button, TextInput, StyleSheet, AsyncStorage } from 'react-native';
+import { View, Text, StyleSheet, AsyncStorage, Alert } from 'react-native';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+
 import TopMenu from './TopMenu';
-import FilesList from "./FilesList";
-import Icon from 'react-native-vector-icons/FontAwesome';
-import qarConnector from "./services/qarConnector"
+import CapitalText from './CapitalText';
+import FlightsList from "./FlightsList";
 
-const HomeIcon = (<Icon name="home" size={60} color="#708090" />)//home
-
-var STORAGE_PREFIX = '@QarSyncManagerFiles:files';// constant for AsyncStorage prefix
-var files = [
-            {name: 'first', lastDateSavingFromQAR : "somedate", syncDate : "lastSyncDate", status : "sent"},
-            {name: 'second', lastDateSavingFromQAR : "somedateNew2", syncDate : "lastSyncDateNew2", status : "loaded"},
-            {name: 'Third', lastDateSavingFromQAR : "somedateNew3", syncDate : "lastSyncDateNew3", status : "loaded"},
-            {name: 'Third4', lastDateSavingFromQAR : "somedateNew3", syncDate : "lastSyncDateNew3", status : "sent"},
-            {name: 'Third5', lastDateSavingFromQAR : "somedateNew3", syncDate : "lastSyncDateNew3", status : "loaded"},
-            {name: 'Third6', lastDateSavingFromQAR : "somedateNew3", syncDate : "lastSyncDateNew3", status : "sent"}];
-            
-var qarTokenUrl = "http://qar-emul.luch15.com";
-var userName = 'user';
-var passWord = '12345678User';
+import fetchFlights from "./actions/fetchFlights";
+import getSettings from "./actions/getSettings";
 
 class Home extends React.Component
 {
-    constructor (props) {
-        super(props);
-
-        this.state = {
-            inputText: 'file1',
-            file: 'empty',
-            isDone : false,
-        };
-        qarConnector.connect(qarTokenUrl, userName, passWord)
-    }
-    // method for files settting from an array in AsyncStorage
-    setFiles ()
+    fetchDevice()
     {
-        for (var i = 0; i < files.length; i++) {
-            AsyncStorage
-                .setItem(STORAGE_PREFIX + i, JSON.stringify(files[i]))
-                .done(()=>{this.setState({file : 'loaded', isDone : !this.state.isDone }) });
+        if (!this.settingsValid(['qarIp', 'qarLoginHttpAuthorizationd', 'qarPassHttpAuth'])) {
+            Alert.alert('1','1')
+            return;
         }
+    }
+
+    syncWithServer()
+    {
+
+    }
+
+    componentDidMount() {
+        if (this.props.settingsPending !== false) {
+            this.props.getSettings({
+                storageKeyPrefix: this.props.storageKeyPrefix,
+                defaultSettings: this.props.defaultSettings
+            });
+        }
+    }
+
+    settingsValid(settingsKeys)
+    {
+        let settingsValid = true;
+        settingsKeys.forEach((item, index) => {
+            let searchedIndex = this.props.settings.items.findIndex(
+                element => element.key === item
+            );
+console.log(searchedIndex);
+            console.log(this.props.settings.items[searchedIndex].value);
+
+            if (!this.props.settings.items.length
+                || (searchedIndex === null)
+                || (this.props.settings.items[searchedIndex].value.length < 3)
+            ) {
+                settingsValid = false;
+            }
+        });
+
+        return settingsValid;
+    }
+
+    putTopMenu()
+    {
+        let items = [
+            {
+                icon: 'settings',
+                handler: this.props.routes.settings
+            }, {
+                icon: 'file-download',
+                handler: this.fetchDevice.bind(this)
+            }, {
+                icon: 'cloud-upload',
+                handler: this.syncWithServer.bind(this)
+            }
+        ];
+
+        return <TopMenu items={ items } />
     }
 
     render ()
@@ -49,19 +80,12 @@ class Home extends React.Component
         let Actions = this.props.routes;
         return (
             <View style={styles.container}>
-                <TopMenu settingsActions={ Actions.settings }/>
-                <View style={styles.homePage}>
-                    <Text>{HomeIcon}</Text>
-                    <Text>Home page</Text>
-                    <Text style={styles.filesTitle}>Files:</Text>
-                    <Text>{ this.state.file }</Text>
-                    <TextInput style={ styles.inputFileName }
-                        autoCapitalize="none"
-                        value={this.state.inputText}
-                        onChangeText={(text) => this.setState({inputText: text})}
+                { this.putTopMenu() }
+                <View style={ styles.homePage }>
+                    <CapitalText
+                        text='Flights list'
                     />
-                    <Button onPress={ this.setFiles.bind(this) }  title="addFile" >Get Files</Button>
-                    <FilesList storage_prefix={ STORAGE_PREFIX } filesArrayLength = {files.length} rendering = {this.state.rendering}/>
+                    <FlightsList/>
                 </View>
             </View>
         );
@@ -81,16 +105,27 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#F0FFFF',
     },
-    filesTitle: {
-        margin: 25,
-    },
-    inputFileName: {
-        width: 300,
-    },
     filesList : {
         alignItems: 'flex-end',
         flexDirection : 'row'
     }
 });
 
-module.exports = Home;
+function mapStateToProps (state) {
+    return {
+        flightsPending: state.flights.pending,
+        settingsPending: state.settings.pending,
+        storageKeyPrefix: state.settings.storageKey,
+        settings: state.settings,
+        defaultSettings: state.settings.default
+    }
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        fetchFlights: bindActionCreators(fetchFlights, dispatch),
+        getSettings: bindActionCreators(getSettings, dispatch)
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);

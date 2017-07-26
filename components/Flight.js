@@ -1,11 +1,8 @@
 'use strict';
 import React, { Component } from 'react';
-import { View, Text, Button, TextInput, StyleSheet, AsyncStorage} from 'react-native';
-import { Router, routerReducer, Route } from 'react-native-redux-router';
-import Home from './Home';
-import Settings from './Settings';
+import { View, Text, StyleSheet } from 'react-native';
 
-class ServerCard extends Component
+class Flight extends Component
 {
     getStyle (status)
     {
@@ -52,4 +49,4 @@ const styles = StyleSheet.create({
     }
 });
 
-module.exports = ServerCard;
+module.exports = Flight;
