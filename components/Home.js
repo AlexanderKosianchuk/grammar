@@ -7,19 +7,24 @@ import { connect } from 'react-redux';
 
 import TopMenu from './TopMenu';
 import CapitalText from './CapitalText';
-import FlightsList from "./FlightsList";
+import FlightsList from './FlightsList';
 
-import fetchFlights from "./actions/fetchFlights";
-import getSettings from "./actions/getSettings";
+import fetchFlights from './actions/fetchFlights';
+import getSettings from './actions/getSettings';
 
 class Home extends React.Component
 {
     fetchDevice()
     {
-        if (!this.settingsValid(['qarIp', 'qarLoginHttpAuthorizationd', 'qarPassHttpAuth'])) {
-            Alert.alert('1','1')
+        let deviceSettings = ['qarIp', 'qarLoginHttpAuthorizationd', 'qarPassHttpAuth', 'fdrId'];
+        if (!this.isValid(deviceSettings)) {
+            Alert.alert('Settings Misconfiguration','Incorrect QAR connection settings')
             return;
         }
+
+        this.props.fetchFlights(
+            this.retreiveSettings(deviceSettings)
+        );
     }
 
     syncWithServer()
@@ -36,25 +41,37 @@ class Home extends React.Component
         }
     }
 
-    settingsValid(settingsKeys)
+    isValid(settingsKeys)
     {
-        let settingsValid = true;
+        let requestedSettings = this.retreiveSettings(settingsKeys);
+
+        if (Object.keys(requestedSettings).length === settingsKeys.length) {
+            return true;
+        }
+
+        return false;
+    }
+
+    retreiveSettings(settingsKeys)
+    {
+        let requestedSettings = {};
         settingsKeys.forEach((item, index) => {
             let searchedIndex = this.props.settings.items.findIndex(
                 element => element.key === item
             );
-console.log(searchedIndex);
-            console.log(this.props.settings.items[searchedIndex].value);
 
-            if (!this.props.settings.items.length
-                || (searchedIndex === null)
-                || (this.props.settings.items[searchedIndex].value.length < 3)
+            if (this.props.settings.items.length
+                && (searchedIndex !== null)
+                && (this.props.settings.items[searchedIndex].value.length > 3)
             ) {
-                settingsValid = false;
+                requestedSettings = {
+                    ...requestedSettings,
+                    ...{ [item]: this.props.settings.items[searchedIndex].value}
+                }
             }
         });
 
-        return settingsValid;
+        return requestedSettings;
     }
 
     putTopMenu()
@@ -113,7 +130,6 @@ const styles = StyleSheet.create({
 
 function mapStateToProps (state) {
     return {
-        flightsPending: state.flights.pending,
         settingsPending: state.settings.pending,
         storageKeyPrefix: state.settings.storageKey,
         settings: state.settings,

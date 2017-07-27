@@ -1,35 +1,91 @@
-import {AsyncStorage} from 'react-native';
+import base64 from 'base-64';
+import uuidV4 from 'uuid/v4';
+import RNFetchBlob from 'react-native-fetch-blob';
+
+import downloadFlightFile from './downloadFlightFile';
+
+function dispatchFail (dispatch, request, response) {
+    dispatch({
+        type: 'FETCH_FLIGHTS_FAILED',
+        payload: { request: request, response: response}
+    });
+};
 
 export default function fetchFlights (payload) {
     return function(dispatch) {
         dispatch({
-            type: 'READ_FLIGHTS_START',
+            type: 'FETCH_FLIGHTS_START',
             payload: payload
         });
 
-        AsyncStorage.get(payload.settingsKey, (err, stores) => {
-            let stored = {};
-            stores.forEach((item) => {
-                let key = item[0].replace(payload.storageKeyPrefix, '');
-                stored = {...stored, ...{[key]: item[1] || ''}};
-            });
+        fetch(payload.qarIp, {
+            method: 'GET',
+            headers: {
+                'Accept': 'text/html',
+                'Content-Type' : 'text/html',
+                'Authorization' : 'Basic ' + base64.encode(
+                    payload.qarLoginHttpAuthorizationd + ':' + payload.qarPassHttpAuth
+                )
+            }
+        })
+        .then (
+            (response) => {
+                response.text().then(
+                    (html) => {
+                        let files = [];
 
-            let settings = payload.defaultSettings.map((item) => {
-                //clone for prevent modifying defaultSettings items
-                let newItem = Object.assign({}, item);
-                if (stored[item.key]
-                    && (stored[item.key] !== item.value)
-                ) {
-                    newItem.value = stored[item.key];
-                }
+                        let match = [];
+                        let pattern = /<a href="((.*?).dat)"/g;;
 
-                return newItem;
-            });
+                        while (match = pattern.exec(html)) {
+                            files.push(match[1]);
+                        }
 
-            dispatch({
-                type: 'READ_FLIGHTS_COMPLETE',
-                payload: {items: flights}
-            });
-        });
+                        let dfd = [];
+                        let flights = [];
+
+                        // callback to add flights in downloadFlightFile fn
+                        let pushFlight = (flight) => {
+                            flights.push(flight);
+                        }
+
+                        files.forEach((url) => {
+                            let uuid = uuidV4();
+                            let name = uuid + '_' + url.substring(url.lastIndexOf('/') + 1);
+                            let path = RNFetchBlob.fs.dirs.DocumentDir + '/flight-files/' + name;
+                            console.log(path);
+                            dfd.push(downloadFlightFile({
+                                    pushFlight: pushFlight,
+                                    uuid: uuid,
+                                    name: name,
+                                    url: url,
+                                    path: path,
+                                    status: 'readout',
+                                    fdrId: payload.fdrId,
+                                    qarLoginHttpAuthorizationd: payload.qarLoginHttpAuthorizationd,
+                                    qarPassHttpAuth: payload.qarPassHttpAuth
+                                })(dispatch)
+                            );
+                        });
+
+                        Promise.all(dfd).then(
+                            () => {
+                                dispatch({
+                                    type: 'FETCH_FLIGHTS_COMPLETE',
+                                    payload: { items: flights }
+                                });
+                            },
+                            () => {
+                                dispatch({
+                                    type: 'DOWNLOAD_FLIGHT_FILES_FAILED',
+                                });
+                            }
+                        );
+                    },
+                    (response) => { dispatchFail(dispatch, payload, response) }
+                )
+            },
+            (response) => { dispatchFail(dispatch, payload, response) }
+        );
     }
 };

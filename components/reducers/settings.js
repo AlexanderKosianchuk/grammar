@@ -5,6 +5,7 @@ const initialState = {
         {label: 'QAR IP', key: 'qarIp', value: ''},
         {label: 'QAR login HTTP auth', key: 'qarLoginHttpAuthorizationd', value: ''},
         {label: 'QAR Pass HTTP auth', key: 'qarPassHttpAuth', value: ''},
+        {label: 'Fdr ID', key: 'fdrId', value: ''},
         {label: 'Server IP', key: 'syncServerIp', value: ''},
         {label: 'Server login', key: 'syncServerLogin', value: ''},
         {label: 'Server pass', key: 'syncServerPass', value: ''},

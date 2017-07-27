@@ -25,7 +25,7 @@ class FlightsList extends Component
 
         let storedFlights = this.props.flights.items;
         let flights =  Object.keys(storedFlights).map((key, index) =>
-            <Flight key={index} data={ storedFlights[key] }/>
+            <Flight key={index} flight={ storedFlights[key] }/>
         );
 
         if (!flights.length) {

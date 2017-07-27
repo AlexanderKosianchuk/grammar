@@ -18,11 +18,9 @@ class Flight extends Component
     render ()
     {
         return(
-            <View key={this.props.i} style={styles.container}>
-                <Text>{this.props.name}</Text>
-                <Text>{this.props.lastDateSavingFromQAR}</Text>
-                <Text>{this.props.syncDate}</Text>
-                <Text style = {this.getStyle(this.props.status)}>{this.props.status}</Text>
+            <View style={styles.container}>
+                <Text>{this.props.flight.name}</Text>
+                <Text style = {this.getStyle(this.props.flight.status)}>{this.props.flight.status}</Text>
                 <Text>--------------------------------------------------</Text>
             </View>
         );

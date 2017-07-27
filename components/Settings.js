@@ -67,13 +67,6 @@ class Settings extends React.Component {
         }
     }
 
-    componentWillUnmount() {
-        // for testing AsyncStorage configs saving
-        if (__DEV__) {
-            this.props.clearSettings();
-        }
-    }
-
     putTextInput(configItem) {
         return (
             <View key={configItem.index} style={styles.configItem}>
