@@ -1,6 +1,7 @@
 import base64 from 'base-64';
 import uuidV4 from 'uuid/v4';
 import RNFetchBlob from 'react-native-fetch-blob';
+import moment from 'moment';
 
 import downloadFlightFile from './downloadFlightFile';
 
@@ -51,15 +52,17 @@ export default function fetchFlights (payload) {
 
                         files.forEach((url) => {
                             let uuid = uuidV4();
-                            let name = uuid + '_' + url.substring(url.lastIndexOf('/') + 1);
-                            let path = RNFetchBlob.fs.dirs.DocumentDir + '/flight-files/' + name;
-                            console.log(path);
+                            let name = url.substring(url.lastIndexOf('/') + 1);
+                            let path = RNFetchBlob.fs.dirs.DocumentDir + '/flight-files/' + uuid + '_' + name;
+
                             dfd.push(downloadFlightFile({
                                     pushFlight: pushFlight,
                                     uuid: uuid,
                                     name: name,
                                     url: url,
                                     path: path,
+                                    readoutData: moment().format('DD MM YYYY HH:mm:ss'),
+                                    sendData: '',
                                     status: 'readout',
                                     fdrId: payload.fdrId,
                                     qarLoginHttpAuthorizationd: payload.qarLoginHttpAuthorizationd,

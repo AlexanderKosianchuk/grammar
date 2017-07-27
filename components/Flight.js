@@ -17,11 +17,13 @@ class Flight extends Component
 
     render ()
     {
+        console.log(this.props.flight);
         return(
             <View style={styles.container}>
                 <Text>{this.props.flight.name}</Text>
+                <Text>{this.props.flight.readoutData}</Text>
+                <Text>{this.props.flight.sendData}</Text>
                 <Text style = {this.getStyle(this.props.flight.status)}>{this.props.flight.status}</Text>
-                <Text>--------------------------------------------------</Text>
             </View>
         );
     }

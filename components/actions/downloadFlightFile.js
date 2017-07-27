@@ -18,14 +18,7 @@ export default function downloadFlightFile (payload) {
                     payload.qarLoginHttpAuthorizationd + ':' + payload.qarPassHttpAuth
                 )
             }).then(() => {
-                    payload.pushFlight({
-                        uuid: payload.uuid,
-                        status: payload.status,
-                        url: payload.status,
-                        fdrId: payload.fdrId,
-                        name: payload.name,
-                        path: payload.path
-                    });
+                    payload.pushFlight(payload);
 
                     resolve({
                         uuid: payload.uuid,
