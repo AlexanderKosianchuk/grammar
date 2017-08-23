@@ -14,7 +14,7 @@ export default function downloadFlightFile (payload) {
                 path: payload.path
             })
             .fetch('GET', payload.url, {
-                'Authorization' : 'Basic ' + base64.encode(
+                Authorization : 'Basic ' + base64.encode(
                     payload.qarLoginHttpAuthorizationd + ':' + payload.qarPassHttpAuth
                 )
             }).then(() => {

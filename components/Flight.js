@@ -6,46 +6,57 @@ class Flight extends Component
 {
     getStyle (status)
     {
-        if (status === 'loaded') {
-            return styles.colorForStatusLoaded
-        } else if (status === 'sent'){
-            return styles.colorForStatusSent
+        if (status === 'readout') {
+            return styles.readout;
+        } else if (status === 'sent') {
+            return styles.sent;
+        } else if (status === 'processed') {
+            return styles.processed;
         } else {
-            return styles.colorForStatusError
+            return styles.unknown
         }
     }
 
     render ()
     {
-        console.log(this.props.flight);
         return(
             <View style={styles.container}>
-                <Text>{this.props.flight.name}</Text>
-                <Text>{this.props.flight.readoutData}</Text>
-                <Text>{this.props.flight.sendData}</Text>
-                <Text style = {this.getStyle(this.props.flight.status)}>{this.props.flight.status}</Text>
+                <Text>{ 'File name: ' + this.props.flight.name}</Text>
+                <Text>{ 'Fdr ID: ' + this.props.flight.fdrId}</Text>
+                <Text>{ 'Readout date: ' + this.props.flight.readoutData}</Text>
+                <Text>{ 'Sync with server date: '
+                    + (this.props.flight.sendData.length ? this.props.flight.sendData : '-' )}
+                </Text>
+                <Text style = {this.getStyle(this.props.flight.status)}>
+                    { 'File status: ' + this.props.flight.status }
+                </Text>
             </View>
         );
     }
 }
 
 const styles = StyleSheet.create({
-    colorForStatusLoaded: {
-        backgroundColor : 'blue'
+    readout: {
+        color : '#586B8F'
     },
-    colorForStatusSent: {
-        flex : 1,
-        backgroundColor :  'red'
+    sent: {
+        color : '#3B0944'
     },
-    colorForStatusError: {
-        flex : 1,
-        backgroundColor :  'black'
+    processed: {
+        color :  '#588C73'
+    },
+    unknown: {
+        color :  '#D96459'
     },
     container: {
         flex : 1,
-        paddingTop: 5,
-        backgroundColor: 'yellow',
-        flexDirection: 'column'
+        padding: 4,
+        paddingLeft: 14,
+        backgroundColor: '#fff',
+        flexDirection: 'column',
+        borderRadius: 4,
+        borderWidth: 0.5,
+        borderColor: '#d6d7da',
     }
 });
 

@@ -1,5 +1,6 @@
 const initialState = {
     pending: null,
+    error: null,
     storageKey: '@flights',
     items: []
 };
@@ -28,6 +29,12 @@ export default function flights(state = initialState, action) {
                 ...state, ...{
                     pending: false,
                     items: action.payload.items
+                }
+            };
+        case 'FETCH_FLIGHTS_FAILED':
+            return {
+                ...state, ...{
+                    error: 'Fatching failed'
                 }
             };
         default:

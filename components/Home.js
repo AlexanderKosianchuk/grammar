@@ -23,7 +23,7 @@ class Home extends React.Component
         }
 
         this.props.fetchFlights(
-            this.retreiveSettings(deviceSettings)
+            this.retrieveSettings(deviceSettings)
         );
     }
 
@@ -41,9 +41,19 @@ class Home extends React.Component
         }
     }
 
+    componentDidUpdate() {
+        if ((this.props.settingsPending === false)
+            && (this.props.flightsPending === null)
+        ) {
+            this.fetchDevice(
+                this.retrieveSettings(deviceSettings)
+            );
+        }
+    }
+
     isValid(settingsKeys)
     {
-        let requestedSettings = this.retreiveSettings(settingsKeys);
+        let requestedSettings = this.retrieveSettings(settingsKeys);
 
         if (Object.keys(requestedSettings).length === settingsKeys.length) {
             return true;
@@ -52,7 +62,7 @@ class Home extends React.Component
         return false;
     }
 
-    retreiveSettings(settingsKeys)
+    retrieveSettings(settingsKeys)
     {
         let requestedSettings = {};
         settingsKeys.forEach((item, index) => {
@@ -133,7 +143,8 @@ function mapStateToProps (state) {
         settingsPending: state.settings.pending,
         storageKeyPrefix: state.settings.storageKey,
         settings: state.settings,
-        defaultSettings: state.settings.default
+        defaultSettings: state.settings.default,
+        flightsPending: state.flights.pending
     }
 }
 

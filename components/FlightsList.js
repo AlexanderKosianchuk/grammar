@@ -17,6 +17,14 @@ class FlightsList extends Component
         }
     }
 
+    componentDidUpdate()
+    {
+        if (this.props.fetchingError !== null) {
+            Alert.alert('Fetching error','Cant fetch flights from the device');
+        }
+    }
+
+
     buildList()
     {
         if (this.props.pending !== false) {
@@ -64,6 +72,7 @@ const styles = StyleSheet.create({
 function mapStateToProps (state) {
     return {
         pending: state.flights.pending,
+        fetchingError: state.flights.error,
         flights: state.flights,
         storageKey: state.flights.storageKey,
     }
