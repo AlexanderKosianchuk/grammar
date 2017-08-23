@@ -1,0 +1,8 @@
+{
+    "version": "0.0.1",
+    "minContainerVersion": "0.0.1",
+    "url": {
+        "url": "/android/app/src/main/assets/index.android.bundle",
+        "isRelative": true
+    }
+}
