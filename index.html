@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Grammar</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+        crossorigin="anonymous"
+    >
+    <style type="text/css">
+        html {
+            overflow-x: hidden;
+        }
+        body {
+            background-color: cornflowerblue;
+            color: #fff;
+            text-align: center;
+            font-size: 18px;
+        }
+        #file {
+            margin: 0 auto;
+            padding: 20px 0px 20px 165px;
+        }
+        .hidden {
+            visibility: hidden;
+        }
+        #start {
+            margin: 10px;
+        }
+        #answer {
+            max-width:80%;
+            margin: 10px auto;
+        }
+        #root {
+            padding: 20px;
+        }
+        #correctAnswer {
+            font-style: italic;
+        }
+        #question {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Hello Igor! Keep working hard.</h1>
+    <div class='row'>
+        <input type="file" id="file"/>
+    </div>
+    <div class='row'>
+        <h4><label id="task">EN -> RU</label></h4>
+    </div>
+    <div class='row'>
+        <button id="changeTask" class='btn btn-default'>Change</button>
+    </div>
+    <div class='row'>
+        <button id="start" class='btn btn-info hidden'>Start</button>
+    </div>
+    <div id='root' class='hidden'>
+        <div class='row'>
+            <label id='question'></label>
+        </div>
+        <div class='row'>
+            <textarea id='answer' class='form-control'></textarea>
+        </div>
+        <div class='row'>
+            <label id='correctAnswer' class='hidden'></label>
+        </div>
+        <hr>
+        <div class='row'>
+            <label id='comment' class='hidden'></label>
+        </div>
+        <div class='row'>
+            <button id="showCorrect" class='btn btn-success'>Show correct</button>
+            <button id="next" class='btn btn-info default'>Next</button>
+        </div>
+    </div>
+    <script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous">
+    </script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous">
+    </script>
+    <script type='text/javascript'>
+        if (!(window.File && window.FileReader && window.FileList && window.Blob)) {
+            alert('Браузер не поддерживает необходимый функционал');
+        }
+
+        let task = 0;
+        $('#changeTask').on('click', function() {
+            if (task === 0) {
+                task = 1;
+                $('#task').text('RU -> EN');
+            } else {
+                task = 0;
+                $('#task').text('EN -> RU');
+            }
+        });
+
+        // Return array of string values, or NULL if CSV string not well formed.
+        function CSVtoArray(text) {
+            var re_valid = /^\s*(?:'[^'\\]*(?:\\[\S\s][^'\\]*)*'|"[^"\\]*(?:\\[\S\s][^"\\]*)*"|[^,'"\s\\]*(?:\s+[^,'"\s\\]+)*)\s*(?:,\s*(?:'[^'\\]*(?:\\[\S\s][^'\\]*)*'|"[^"\\]*(?:\\[\S\s][^"\\]*)*"|[^,'"\s\\]*(?:\s+[^,'"\s\\]+)*)\s*)*$/;
+            var re_value = /(?!\s*$)\s*(?:'([^'\\]*(?:\\[\S\s][^'\\]*)*)'|"([^"\\]*(?:\\[\S\s][^"\\]*)*)"|([^,'"\s\\]*(?:\s+[^,'"\s\\]+)*))\s*(?:,|$)/g;
+            // Return NULL if input string is not well formed CSV string.
+            if (!re_valid.test(text)) return null;
+            var a = [];                     // Initialize array to receive values.
+            text.replace(re_value, // "Walk" the string using replace with callback.
+                function(m0, m1, m2, m3) {
+                    // Remove backslash from \' in single quoted values.
+                    if      (m1 !== undefined) a.push(m1.replace(/\\'/g, "'"));
+                    // Remove backslash from \" in double quoted values.
+                    else if (m2 !== undefined) a.push(m2.replace(/\\"/g, '"'));
+                    else if (m3 !== undefined) a.push(m3);
+                    return ''; // Return empty string.
+                });
+            // Handle special case of empty last value.
+            if (/,\s*$/.test(text)) a.push('');
+            return a;
+        };
+
+        let quize = [];
+
+        function handleFileSelect(evt) {
+            var files = evt.target.files; // FileList object
+
+            var reader = new FileReader();
+            var text = reader.readAsText(files[0]);
+
+            reader.onload = function(e) {
+                let lines = e.currentTarget.result.split('\n');
+
+                lines.forEach(function (item, index) {
+                    if (item !== '') {
+                        quize.push(CSVtoArray(item));
+                    }
+                });
+
+                $('#start').removeClass('hidden');
+            }
+        }
+
+        function randomInteger(min, max) {
+            var rand = min - 0.5 + Math.random() * (max - min + 1)
+            rand = Math.round(rand);
+            return rand;
+        }
+
+        function setQuize() {
+            let questionNum = randomInteger(0, quize.length-1);
+            let question = quize[questionNum];
+
+            if (task === 0) {
+                $('#question').text(question[0]);
+                $('#correctAnswer').text(question[1]);
+                $('#comment').text(question[2]);
+            } else {
+                $('#question').text(question[1]);
+                $('#correctAnswer').text(question[0]);
+                $('#comment').text(question[2]);
+            }
+
+            $('#answer').text('');
+            $('#correctAnswer').addClass('hidden');
+            $('#comment').addClass('hidden');
+        }
+
+        $('#start').on('click', function() {
+            $('#file').hide();
+            $('#start').hide();
+            setQuize();
+            $('#root').removeClass('hidden');
+        });
+
+        $('#showCorrect').on('click', function() {
+            $('#correctAnswer').removeClass('hidden');
+            $('#comment').removeClass('hidden');
+        });
+
+        $('#next').on('click', function() {
+            setQuize();
+        });
+
+        document.getElementById('file').addEventListener('change', handleFileSelect, false);
+        document.getElementById('file').addEventListener('click', changeTask, false);
+    </script>
+
+</body>
+</html>

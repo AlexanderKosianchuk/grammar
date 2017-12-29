@@ -1,9 +1,0 @@
-rootProject.name = 'QarSyncManager'
-include ':react-native-vector-icons'
-project(':react-native-vector-icons').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-vector-icons/android')
-include ':react-native-fetch-blob'
-project(':react-native-fetch-blob').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-fetch-blob/android')
-include ':ReactNativeAutoUpdater'
-project(':ReactNativeAutoUpdater').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-auto-updater/android')
-
-include ':app'
