@@ -82,6 +82,10 @@
         integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
         crossorigin="anonymous">
     </script>
+    <!-- add the shim first -->
+    <script type="text/javascript" src="shim.js"></script>
+    <!-- after the shim is referenced, add the library -->
+    <script type="text/javascript" src="xlsx.full.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
         integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
         crossorigin="anonymous">
@@ -90,6 +94,27 @@
         if (!(window.File && window.FileReader && window.FileList && window.Blob)) {
             alert('Браузер не поддерживает необходимый функционал');
         }
+
+        var sheet2arr = function(sheet){
+           var result = [];
+           var row;
+           var rowNum;
+           var colNum;
+           var range = XLSX.utils.decode_range(sheet['!ref']);
+           for(rowNum = range.s.r; rowNum <= range.e.r; rowNum++){
+              row = [];
+               for(colNum=range.s.c; colNum<=range.e.c; colNum++){
+                  var nextCell = sheet[
+                     XLSX.utils.encode_cell({r: rowNum, c: colNum})
+                  ];
+                  if( typeof nextCell === 'undefined' ){
+                     row.push(void 0);
+                  } else row.push(nextCell.w);
+               }
+               result.push(row);
+           }
+           return result;
+        };
 
         let task = 0;
         $('#changeTask').on('click', function() {
@@ -102,43 +127,18 @@
             }
         });
 
-        // Return array of string values, or NULL if CSV string not well formed.
-        function CSVtoArray(text) {
-            var re_valid = /^\s*(?:'[^'\\]*(?:\\[\S\s][^'\\]*)*'|"[^"\\]*(?:\\[\S\s][^"\\]*)*"|[^,'"\s\\]*(?:\s+[^,'"\s\\]+)*)\s*(?:,\s*(?:'[^'\\]*(?:\\[\S\s][^'\\]*)*'|"[^"\\]*(?:\\[\S\s][^"\\]*)*"|[^,'"\s\\]*(?:\s+[^,'"\s\\]+)*)\s*)*$/;
-            var re_value = /(?!\s*$)\s*(?:'([^'\\]*(?:\\[\S\s][^'\\]*)*)'|"([^"\\]*(?:\\[\S\s][^"\\]*)*)"|([^,'"\s\\]*(?:\s+[^,'"\s\\]+)*))\s*(?:,|$)/g;
-            // Return NULL if input string is not well formed CSV string.
-            if (!re_valid.test(text)) return null;
-            var a = [];                     // Initialize array to receive values.
-            text.replace(re_value, // "Walk" the string using replace with callback.
-                function(m0, m1, m2, m3) {
-                    // Remove backslash from \' in single quoted values.
-                    if      (m1 !== undefined) a.push(m1.replace(/\\'/g, "'"));
-                    // Remove backslash from \" in double quoted values.
-                    else if (m2 !== undefined) a.push(m2.replace(/\\"/g, '"'));
-                    else if (m3 !== undefined) a.push(m3);
-                    return ''; // Return empty string.
-                });
-            // Handle special case of empty last value.
-            if (/,\s*$/.test(text)) a.push('');
-            return a;
-        };
-
         let quize = [];
 
         function handleFileSelect(evt) {
             var files = evt.target.files; // FileList object
 
             var reader = new FileReader();
-            var text = reader.readAsText(files[0]);
+            var text = reader.readAsBinaryString(files[0]);
 
             reader.onload = function(e) {
-                let lines = e.currentTarget.result.split('\n');
-
-                lines.forEach(function (item, index) {
-                    if (item !== '') {
-                        quize.push(CSVtoArray(item));
-                    }
-                });
+                let wb = XLSX.read(e.currentTarget.result, {type: 'binary'});
+                let k = Object.keys(wb.Sheets);
+                quize = sheet2arr(wb.Sheets[k[0]]);
 
                 $('#start').removeClass('hidden');
             }
